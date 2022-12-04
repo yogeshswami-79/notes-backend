@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import * as bcript from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Controller('api')
 export class AppController {
@@ -13,12 +13,13 @@ export class AppController {
     @Body('email') email : string,
     @Body('password') password : string
     ) {
-      const hashedPass = await bcript.hash(password, 12);
+      const hash = await bcrypt.hash(password, 12 );
+
       return this.appService.create({
         name,
         email,
-        hashedPass
-      }) 
+        password:hash
+      });
     }
 
 }

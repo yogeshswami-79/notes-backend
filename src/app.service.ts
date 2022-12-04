@@ -9,7 +9,12 @@ export class AppService {
   constructor( @InjectRepository(User) private readonly userRepository: Repository<User> ){}
 
   async create(data:any): Promise<User> {
-    return this.userRepository.save(data);
+    console.log(data);
+    try {
+      return await this.userRepository.save(data);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 }
