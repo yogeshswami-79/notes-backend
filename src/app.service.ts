@@ -9,12 +9,20 @@ export class AppService {
   constructor( @InjectRepository(User) private readonly userRepository: Repository<User> ){}
 
   async create(data:any): Promise<User> {
-    console.log(data);
+    return this.userRepository.save(data);
+  }
+
+  async userExists(condition:any): Promise < User | undefined> {
+    return this.userRepository.findOneBy(condition);
+  }
+
+  async login(data:any): Promise<string>{
     try {
-      return await this.userRepository.save(data);
+      
     } catch (error) {
-      console.log(error)
+      
     }
+    return null;
   }
 
 }
