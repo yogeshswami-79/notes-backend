@@ -1,42 +1,80 @@
-import { Body, Controller, Get, Post , Query } from '@nestjs/common';
+import { Body , Controller, Get, Post, Query , BadRequestException, Req, NotFoundException } from '@nestjs/common';
+import { Request } from 'express';
+import { User } from 'src/entities/user.entity';
 import { NotesService } from './notes.service';
 
 @Controller('notes')
 export class NotesController {
-    
-    constructor(private readonly notesService:NotesService) { }
+
+    constructor(private readonly notesService: NotesService) { }
+
 
     @Get()
-    async getNotes( @Query('uid') uid: string ) {
-        const res = await this.notesService.getNotesByUID(uid);
-        return res;
+    async getNotes(
+        @Req() req: Request,
+        @Query('skip') skip: number,
+    ){
+        const uid = req.user['uid'];
+        return await this.notesService.getNotes(uid, skip);
+    }
+
+    @Get()
+    async getByTag(
+        @Req() req: Request,
+        @Query('tag') tag: string,
+        @Query('skip') skip: number
+    ){
+        const uid = req.user['uid'];
+        return await this.notesService.getNotesByTag(uid, tag, skip);  
     }
 
     @Post('tags')
-    async getNotesByTag( @Query('uid') uid: string, @Body('tags') tags: string[] ) {
-        const res = await this.notesService.getNotesByTag(uid, tags);
-        return res;
+    async getNotesByTag(
+        @Req() req: Request, 
+        @Query('tags') tags: string[]) {
+        
     }
 
-    
 
     @Get('/top')
-    async getTopTags( ) {
+    async getTopTags() {
         const res = await this.notesService.getTopTags();
         return res;
     }
 
 
     @Post('insert')
-    async insertNote( @Body('note') note: any ) {
+    async insertNote(
+        @Req() req: Request,
+        @Body('title') title: string,
+        @Body('description') description: string,
+        @Body('tag') tag: string[],
+    ) {
+        const uid = req.user['uid']
 
+        const note = { time: new Date() , title , description , tag , uid };
+
+        try {
+            const res= await this.notesService.insertNote(note);
+            return res;
+        } catch (error) {
+            throw new BadRequestException();
+        }
     }
 
     @Post('delete')
-    async deleteNote(@Body('uid') uid: string, @Body('nid') nid: string ) {
-        const res = await this.notesService.deleteNote(uid,nid);
-        return res
-    }
+    async deleteNote(
+            @Req() req:Request, 
+            @Body('nid') nid: string
+        ) {
+            const obj = {uid:req.user['uid'], nid };
 
+            try {
+                await this.notesService.deleteNote(obj);
+                return {msg:'deleted'}
+            } catch (error) {
+                throw new NotFoundException();
+            }
+    }
 
 }

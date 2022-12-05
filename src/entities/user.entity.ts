@@ -1,18 +1,26 @@
-import { Entity , Column , PrimaryGeneratedColumn } from 'typeorm';
+import { Entity , Column , PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Note } from './note.entity';
+
 
 @Entity('users')
 export class User{
 
     @PrimaryGeneratedColumn()
-    id:number;
+    uid:number;
 
     @Column()
     name:string;
 
-    @Column( "text" , { unique:true,  } )
+    @Column("text", { unique:true, nullable:false} )
+    uname:string
+    
+    @Column( "text" , { unique:true, nullable:false } )
     email:string;
 
-    @Column("text")
+    @Column("text", { nullable:false } )
     password:string;
-    
+
+    // @OneToMany(()=>Note, note=> note.user)
+    // notes:Note[];
+
 }

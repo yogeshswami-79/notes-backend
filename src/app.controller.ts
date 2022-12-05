@@ -51,7 +51,7 @@ export class AppController {
     }
 
     const payload = {
-      id: user.id,
+      id: user.uid,
       name: user.name,
       email: user.email,
     }

@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
+import { Note } from 'src/entities/note.entity';
 
 
 @Module({
@@ -14,12 +15,12 @@ import { User } from 'src/entities/user.entity';
       port: 9799,
       username: "icmi",
       password: "password",
-      database: "testdbpg",
+      database: "notes",
       logging: true,
-      entities: [User],
+      entities: ['dist/**/*.entity.{js,ts}'],
     }),
 
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature( [ User, Note ] ),
 
     JwtModule.register({
       secret: 'secret',

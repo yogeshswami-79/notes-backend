@@ -1,21 +1,62 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Note } from 'src/entities/note.entity';
+import { User } from 'src/entities/user.entity';
+import { Equal, FindManyOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class NotesService {
+   
+    constructor(
+        @InjectRepository(Note) private noteRepo: Repository<Note>,
+        @InjectRepository(User) private readonly userRepo: Repository<User>
+    ) { }
 
-    async getNotesByUID( uid: string ) {
+
+
+    async getTopTags() {
 
     }
 
-    async getNotesByTag( uid: string, tag: string[] ) {
-
+    async userExists(uid: any ) {
+        return this.userRepo.findOneBy(uid);
     }
 
-    async deleteNote( uid: string, nid: string ) {
 
+    async getNotes(uid:any, skip: number = 0){
+        const where: FindManyOptions<Note>['where']={};
+        where.uid = Equal(uid);
+
+        return this.noteRepo.findAndCount({
+            where,
+            skip,
+            take:10
+        })
     }
 
-    async getTopTags(){
-        
+    async getNotesByTag(uid: string , tag: string, skip: number = 0){
+        const where: FindManyOptions<Note>['where']={};
+        where.uid = Equal(uid);
+        where.tag = Equal(tag);
+
+        return this.noteRepo.findAndCount({
+            where,
+            skip,
+            take:10
+        })
     }
+
+
+    async insertNote( data:any ) {
+        const user = await this.userExists({uid:data.uid});
+        return this.noteRepo.save(data);
+    }
+
+    async deleteNote(obj:any) {
+        const note = await this.noteRepo.findOneBy(obj);
+        if(note)    this.noteRepo.delete(this.noteRepo.getId(note));
+    }
+
+
+
 }

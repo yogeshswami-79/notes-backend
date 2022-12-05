@@ -16,13 +16,14 @@ export class AuthController {
     @Post('register')
     async register(
         @Body('name') name: string,
+        @Body('uname') uname: string,
         @Body('email') email: string,
         @Body('password') password: string
     ) {
         const hash = await bcrypt.hash(password, 12);
 
         try {
-            const user = await this.authService.create({ name, email, password: hash });
+            const user = await this.authService.create({ name, uname, email, password: hash });
             delete user.password;
             return user;
         }
@@ -51,7 +52,7 @@ export class AuthController {
         }
 
         const payload = {
-            id: user.id,
+            uid: user.uid,
             name: user.name,
             email: user.email,
         }
@@ -85,9 +86,10 @@ export class AuthController {
 
             if (!data) throw new UnauthorizedException();
 
+            const user = await this.authService.userExists({ uid: data['id'] })
 
-            const user = await this.authService.userExists({ id: data['id'] })
             const { password, ...result } = user;
+
             return result;
 
         } catch (error) {
