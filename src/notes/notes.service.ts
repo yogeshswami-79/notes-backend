@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Note } from 'src/entities/note.entity';
 import { User } from 'src/entities/user.entity';
-import { Equal, FindManyOptions, Repository } from 'typeorm';
+import { ArrayContains, CollectionDistinctOptions, Equal, FindManyOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class NotesService {
@@ -15,10 +15,14 @@ export class NotesService {
 
 
     async getTopTags() {
-
+        return this.noteRepo
+        .createQueryBuilder("notes")
+        .select('DISTINCT ("tag")')
+        .limit(10)
+        .getRawMany();
     }
 
-    async userExists(uid: any ) {
+    private async userExists(uid: any ) {
         return this.userRepo.findOneBy(uid);
     }
 

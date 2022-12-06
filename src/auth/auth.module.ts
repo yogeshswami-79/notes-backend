@@ -9,18 +9,8 @@ import { Note } from 'src/entities/note.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: "localhost",
-      port: 9799,
-      username: "icmi",
-      password: "password",
-      database: "notes",
-      logging: true,
-      entities: ['dist/**/*.entity.{js,ts}'],
-    }),
 
-    TypeOrmModule.forFeature( [ User, Note ] ),
+    TypeOrmModule.forFeature([User, Note]),
 
     JwtModule.register({
       secret: 'secret',
@@ -29,10 +19,10 @@ import { Note } from 'src/entities/note.entity';
 
   ],
 
-  controllers: [ AuthController ],
+  controllers: [AuthController],
 
-  providers: [ AuthService ],
+  providers: [AuthService],
 
-  exports: [ AuthService , JwtModule ]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule { }

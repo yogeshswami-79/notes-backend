@@ -1,18 +1,32 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { NotesModule } from './notes/notes.module';
-import { TagsModule } from './tags/tags.module';
 
 
 @Module({
 
-  imports: [ AuthModule, NotesModule, TagsModule ],
+  imports: [
+    TypeOrmModule.forRoot( {
+      type: "postgres",
+      host: "localhost",
+      port: 9799,
+      username: "icmi",
+      password: "password",
+      database: "notes",
+      logging: true,
+      entities: ['dist/**/*.entity.{js,ts}'],
+    } ),
 
-  controllers: [ AppController ],
-  
-  providers: [ AppService ],
+    AuthModule,
+    NotesModule
+  ],
+
+  controllers: [AppController],
+
+  providers: [AppService],
 
 })
 

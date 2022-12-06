@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne , JoinColumn, OneToMany } from 'typeorm';
-import { User } from './user.entity';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity("notes")
 export class Note {
@@ -16,7 +15,7 @@ export class Note {
     description: string;
 
     @Column("text")
-    tag: string;
+    tag: string
 
     @Column("int")
     uid: Number;
