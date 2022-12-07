@@ -41,7 +41,7 @@ export class NotesController {
     @Get('/top')
     async getTopTags() {
         const res = await this.notesService.getTopTags();
-        return res;
+        return res.map(obj=>obj.tag);
     }
 
 

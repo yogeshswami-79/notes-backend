@@ -20,6 +20,8 @@ export class AuthController {
         @Body('email') email: string,
         @Body('password') password: string
     ) {
+
+        console.log('d', name, uname, email, password);
         const hash = await bcrypt.hash(password, 12);
 
         try {
@@ -32,16 +34,14 @@ export class AuthController {
         }
     }
 
-
-
-
     @Post('login')
     async login(
-        @Body('email') email: string,
+        @Body('uname') uname: string,
         @Body('password') password: string,
         @Res({ passthrough: true }) response: Response
     ) {
-        const user = await this.authService.userExists({ email });
+        console.log('d',uname);
+        const user = await this.authService.userExists({ uname });
 
         if (!user) {
             throw new BadRequestException("User not found!");
@@ -59,11 +59,11 @@ export class AuthController {
 
         const jwt = await this.jwtService.signAsync(payload);
 
-        response.cookie('jwt', jwt, { httpOnly: true })
+        response.cookie('jwt', jwt, { httpOnly: true } );
 
-        return {
-            msg: 'Success'
-        };
+        const msg = { message: 'Success' }
+        return msg;
+
     }
 
 
@@ -82,11 +82,11 @@ export class AuthController {
 
         try {
             const cookie = request.cookies['jwt'];
-            const data = await this.jwtService.verifyAsync(cookie);
 
+            const data = await this.jwtService.verifyAsync(cookie);
             if (!data) throw new UnauthorizedException();
 
-            const user = await this.authService.userExists({ uid: data['id'] })
+            const user = await this.authService.userExists({ uid: data['uid'] })
 
             const { password, ...result } = user;
 

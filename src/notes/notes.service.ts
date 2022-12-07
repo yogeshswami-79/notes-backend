@@ -18,7 +18,7 @@ export class NotesService {
         return this.noteRepo
         .createQueryBuilder("notes")
         .select('DISTINCT ("tag")')
-        .limit(10)
+        .limit(20)
         .getRawMany();
     }
 

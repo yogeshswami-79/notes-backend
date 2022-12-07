@@ -13,7 +13,8 @@ export class ValidatorMiddleware implements NestMiddleware{
         const cookie = req.cookies['jwt'];
 
         if(!cookie){
-            return res.send({err:'login or register user first'});
+            throw new UnauthorizedException('login or register user first');
+            return;
         }
 
         const data = await this.jwtService.verifyAsync(cookie);
